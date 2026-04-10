@@ -416,3 +416,92 @@ textarea { resize: vertical; }
   .hero-copy h1, .step-stage h1 { font-size: 30px; }
   .memory-strip { grid-template-columns: 1fr 1fr; }
 }
+
+.homework-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.homework-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  text-align: left;
+  padding: 16px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(78, 147, 199, 0.1);
+}
+
+.homework-item.active {
+  background: linear-gradient(180deg, rgba(235, 247, 255, 0.95), rgba(255, 255, 255, 0.92));
+  box-shadow: inset 0 0 0 2px rgba(78, 147, 199, 0.14);
+}
+
+.homework-item strong {
+  display: block;
+  margin: 4px 0 6px;
+}
+
+.homework-item p,
+.homework-item small {
+  margin: 0;
+}
+
+.homework-item-meta {
+  display: grid;
+  align-content: space-between;
+  justify-items: end;
+  gap: 8px;
+}
+
+.inline-state,
+.empty-card {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--muted);
+}
+
+.inline-state[data-state="error"] {
+  background: rgba(255, 232, 232, 0.9);
+  color: #9b4343;
+}
+
+.inline-state[data-state="success"] {
+  background: rgba(232, 255, 236, 0.9);
+  color: #4b8c45;
+}
+
+.voice-status {
+  margin-top: 14px;
+  color: var(--muted);
+}
+
+select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(78, 147, 199, 0.12);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 380px) {
+  .homework-item {
+    grid-template-columns: 1fr;
+  }
+
+  .homework-item-meta {
+    justify-items: start;
+  }
+}

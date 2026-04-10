@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -42,22 +42,34 @@
           <div class="section-head">
             <div>
               <p class="eyebrow">今天先做这个</p>
-              <h2 id="homeAssignmentTitle">语文朗读和数学口算</h2>
+              <h2 id="homeAssignmentTitle">加载中...</h2>
             </div>
-            <span class="status-badge" id="homeAssignmentStatus">还没开始</span>
+            <span class="status-badge" id="homeAssignmentStatus">等待同步</span>
           </div>
-          <p class="hint-text">点一下开始，听老师说，再一步一步完成。</p>
+          <p class="hint-text" id="homeAssignmentHint">正在连接后端服务，准备同步老师布置的作业。</p>
           <div class="stack">
-            <button class="primary-button xl" data-go="detail">开始做作业</button>
+            <button class="primary-button xl" id="homeStartButton">开始做作业</button>
             <button class="soft-button voice-trigger" data-speak="assignmentFull">听一遍作业</button>
           </div>
+        </article>
+
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">老师布置的作业</p>
+              <h2>作业列表</h2>
+            </div>
+            <span class="status-badge" id="homeworkCountBadge">0 项</span>
+          </div>
+          <div id="homeworkListState" class="inline-state">正在加载作业列表...</div>
+          <div class="homework-list" id="homeworkList"></div>
         </article>
 
         <div class="two-grid">
           <article class="card mini-card">
             <p class="eyebrow">今日进度</p>
             <div class="progress-ring">
-              <strong id="progressText">1 / 3</strong>
+              <strong id="progressText">0 / 0</strong>
               <span>已完成</span>
             </div>
           </article>
@@ -97,11 +109,11 @@
         <article class="card page-card">
           <p class="eyebrow">家长操作</p>
           <h1>上传作业截图</h1>
-          <p class="hint-text">请上传展开后的完整作业截图，孩子看到的内容会更清楚。</p>
+          <p class="hint-text">现在先保留截图预览和人工确认流程，后续可以继续接入钉钉截图识别。</p>
           <label class="upload-dropzone">
             <input type="file" id="uploadInput" accept="image/*" multiple>
             <span class="upload-title">点这里选图片</span>
-            <small>支持多张图片，10 秒内完成上传</small>
+            <small>支持多张图片，后续会作为作业附件元数据保存</small>
           </label>
           <div class="preview-grid" id="uploadPreview"></div>
           <button class="primary-button xl" id="recognizeButton">开始识别</button>
@@ -116,10 +128,26 @@
             <div class="source-preview" id="recognitionSource"></div>
             <div class="form-stack">
               <label><span>作业标题</span><input id="fieldTitle" type="text"></label>
+              <label><span>科目</span><input id="fieldSubject" type="text"></label>
               <label><span>作业内容</span><textarea id="fieldContent" rows="5"></textarea></label>
               <div class="split-fields">
                 <label><span>老师</span><input id="fieldTeacher" type="text"></label>
-                <label><span>发布时间</span><input id="fieldTime" type="text"></label>
+                <label><span>截止时间</span><input id="fieldDueDate" type="datetime-local"></label>
+              </div>
+              <div class="split-fields">
+                <label><span>优先级</span>
+                  <select id="fieldPriority">
+                    <option value="high">高</option>
+                    <option value="medium">中</option>
+                    <option value="low">低</option>
+                  </select>
+                </label>
+                <label><span>语音朗读</span>
+                  <select id="fieldVoiceEnabled">
+                    <option value="true">开启</option>
+                    <option value="false">关闭</option>
+                  </select>
+                </label>
               </div>
             </div>
           </div>
@@ -127,20 +155,22 @@
             <p class="eyebrow">儿童理解版预览</p>
             <div id="childPreview"></div>
           </article>
+          <div id="recognitionSaveState" class="inline-state hidden"></div>
           <button class="primary-button xl" id="saveRecognitionButton">确认保存</button>
         </article>
       </section>
 
       <section class="page" id="page-detail" data-page="detail">
         <article class="card page-card">
+          <div id="detailState" class="inline-state hidden"></div>
           <div class="section-head">
             <div>
               <p class="eyebrow">今天做什么</p>
-              <h1 id="detailTitle">语文朗读和数学口算</h1>
+              <h1 id="detailTitle">请选择一项作业</h1>
             </div>
-            <span class="status-badge">可以补卡</span>
+            <span class="status-badge" id="detailStatus">待开始</span>
           </div>
-          <p class="meta-line" id="detailMeta">李老师 · 今天 16:30</p>
+          <p class="meta-line" id="detailMeta">老师 · 截止时间</p>
 
           <article class="voice-panel">
             <div class="section-head">
@@ -153,7 +183,10 @@
                 <span>儿童模式</span>
               </label>
             </div>
+            <div class="voice-status" id="voiceStatusText">待生成</div>
+            <audio id="voiceAudio" class="hidden"></audio>
             <div class="voice-controls">
+              <button class="soft-button" id="playTeacherAudioButton">播放老师语音</button>
               <button class="soft-button voice-trigger" data-speak="assignmentFull">播放全文</button>
               <button class="soft-button voice-trigger" data-speak="stepByStep">分步骤播放</button>
               <button class="soft-button" id="pauseSpeechButton">暂停</button>
@@ -165,9 +198,9 @@
           </article>
 
           <div class="tips-grid">
-            <article class="tip-card"><strong>今天做什么</strong><p id="tipWhat">先朗读课文，再写口算，最后拍完成记录。</p></article>
-            <article class="tip-card"><strong>做多久</strong><p>大约 18 分钟</p></article>
-            <article class="tip-card"><strong>怎么算完成</strong><p>每一步都点完成，最后上传作品。</p></article>
+            <article class="tip-card"><strong>今天做什么</strong><p id="tipWhat">请选择一项作业查看。</p></article>
+            <article class="tip-card"><strong>要做多久</strong><p id="tipDuration">等待作业数据</p></article>
+            <article class="tip-card"><strong>怎么算完成</strong><p id="tipComplete">每一步都点完成，最后上传作品。</p></article>
           </div>
 
           <div class="step-list" id="stepList"></div>
@@ -189,18 +222,18 @@
       <section class="page" id="page-step" data-page="step">
         <article class="step-stage">
           <p class="eyebrow">现在只做这一件事</p>
-          <h1 id="stepTitle">第 1 步：大声朗读课文</h1>
-          <p class="step-explain" id="stepDescription">先把课本翻到第 12 页，跟着语音慢慢读 5 分钟。</p>
+          <h1 id="stepTitle">请选择步骤</h1>
+          <p class="step-explain" id="stepDescription">进入某一项作业后，这里会显示当前步骤。</p>
           <button class="primary-button voice-only voice-trigger" data-speak="currentStep">听提示</button>
           <div class="action-zone" id="stepActionZone">
             <div class="timer-panel">
-              <span class="timer-label">朗读倒计时</span>
+              <span class="timer-label">准备开始</span>
               <strong id="timerDisplay">05:00</strong>
               <button class="soft-button" id="timerToggle">开始计时</button>
             </div>
           </div>
           <button class="primary-button xl hidden" id="nextStepButton">下一步</button>
-          <p class="encourage" id="encourageText">你已经开始啦，慢慢来就很好。</p>
+          <p class="encourage" id="encourageText">慢慢来，一步一步完成就很好。</p>
         </article>
       </section>
 
@@ -246,6 +279,7 @@
     </nav>
   </div>
 
-  <script src="./script.js"></script>
+  <script src="./config.js"></script>
+  <script type="module" src="./script.js"></script>
 </body>
 </html>
