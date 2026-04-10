@@ -1,4 +1,4 @@
-const apiBaseUrl = window.APP_CONFIG?.apiBaseUrl;
+const apiBaseUrl = window.APP_CONFIG?.apiBaseUrl?.replace(/\/+$/, "");
 
 if (!apiBaseUrl) {
   throw new Error("APP_CONFIG.apiBaseUrl is not defined.");
