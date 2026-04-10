@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>一年级儿童作业助手</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <div class="bg-orb orb-c"></div>
+
+    <header class="topbar">
+      <button class="icon-button hidden" id="backButton" aria-label="返回上一页"><span>&larr;</span></button>
+      <div class="brand">
+        <span class="brand-mark">小作业星</span>
+        <p>一年级儿童作业助手</p>
+      </div>
+      <button class="icon-button" id="homeButton" aria-label="回到首页"><span>⌂</span></button>
+    </header>
+
+    <main class="phone-frame">
+      <section class="page active" id="page-home" data-page="home">
+        <div class="hero-card">
+          <div class="hero-copy">
+            <span class="pill">今天也能自己完成</span>
+            <h1>下午好，米米</h1>
+            <p id="todayDate">4月10日 星期五</p>
+          </div>
+          <div class="hero-star">
+            <div class="star-core">7</div>
+            <small>连续努力天数</small>
+          </div>
+        </div>
+
+        <article class="card highlight-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">今天先做这个</p>
+              <h2 id="homeAssignmentTitle">语文朗读和数学口算</h2>
+            </div>
+            <span class="status-badge" id="homeAssignmentStatus">还没开始</span>
+          </div>
+          <p class="hint-text">点一下开始，听老师说，再一步一步完成。</p>
+          <div class="stack">
+            <button class="primary-button xl" data-go="detail">开始做作业</button>
+            <button class="soft-button voice-trigger" data-speak="assignmentFull">听一遍作业</button>
+          </div>
+        </article>
+
+        <div class="two-grid">
+          <article class="card mini-card">
+            <p class="eyebrow">今日进度</p>
+            <div class="progress-ring">
+              <strong id="progressText">1 / 3</strong>
+              <span>已完成</span>
+            </div>
+          </article>
+          <article class="card mini-card reward-card">
+            <p class="eyebrow">今日奖励</p>
+            <div class="reward-row">
+              <span class="reward-star">★</span>
+              <div>
+                <strong id="starCount">12 颗星星</strong>
+                <p>再完成 1 项就能点亮新徽章</p>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <article class="card photo-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">成长相片</p>
+              <h2>你被看见啦</h2>
+            </div>
+            <button class="text-button" data-go="growth">查看全部</button>
+          </div>
+          <div class="memory-strip" id="homeMemoryStrip"></div>
+        </article>
+
+        <article class="card weak-card">
+          <div>
+            <p class="eyebrow">家长入口</p>
+            <h3>上传老师发来的作业截图</h3>
+          </div>
+          <button class="ghost-button" data-go="upload">去上传</button>
+        </article>
+      </section>
+
+      <section class="page" id="page-upload" data-page="upload">
+        <article class="card page-card">
+          <p class="eyebrow">家长操作</p>
+          <h1>上传作业截图</h1>
+          <p class="hint-text">请上传展开后的完整作业截图，孩子看到的内容会更清楚。</p>
+          <label class="upload-dropzone">
+            <input type="file" id="uploadInput" accept="image/*" multiple>
+            <span class="upload-title">点这里选图片</span>
+            <small>支持多张图片，10 秒内完成上传</small>
+          </label>
+          <div class="preview-grid" id="uploadPreview"></div>
+          <button class="primary-button xl" id="recognizeButton">开始识别</button>
+        </article>
+      </section>
+
+      <section class="page" id="page-recognition" data-page="recognition">
+        <article class="card page-card">
+          <p class="eyebrow">家长确认</p>
+          <h1>确认识别结果</h1>
+          <div class="recognition-layout">
+            <div class="source-preview" id="recognitionSource"></div>
+            <div class="form-stack">
+              <label><span>作业标题</span><input id="fieldTitle" type="text"></label>
+              <label><span>作业内容</span><textarea id="fieldContent" rows="5"></textarea></label>
+              <div class="split-fields">
+                <label><span>老师</span><input id="fieldTeacher" type="text"></label>
+                <label><span>发布时间</span><input id="fieldTime" type="text"></label>
+              </div>
+            </div>
+          </div>
+          <article class="child-preview">
+            <p class="eyebrow">儿童理解版预览</p>
+            <div id="childPreview"></div>
+          </article>
+          <button class="primary-button xl" id="saveRecognitionButton">确认保存</button>
+        </article>
+      </section>
+
+      <section class="page" id="page-detail" data-page="detail">
+        <article class="card page-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">今天做什么</p>
+              <h1 id="detailTitle">语文朗读和数学口算</h1>
+            </div>
+            <span class="status-badge">可以补卡</span>
+          </div>
+          <p class="meta-line" id="detailMeta">李老师 · 今天 16:30</p>
+
+          <article class="voice-panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">语音帮助</p>
+                <h3>听老师怎么说</h3>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="childModeToggle" checked>
+                <span>儿童模式</span>
+              </label>
+            </div>
+            <div class="voice-controls">
+              <button class="soft-button voice-trigger" data-speak="assignmentFull">播放全文</button>
+              <button class="soft-button voice-trigger" data-speak="stepByStep">分步骤播放</button>
+              <button class="soft-button" id="pauseSpeechButton">暂停</button>
+            </div>
+            <div class="segmented">
+              <button class="segment active" data-rate="0.78">慢速</button>
+              <button class="segment" data-rate="1">正常</button>
+            </div>
+          </article>
+
+          <div class="tips-grid">
+            <article class="tip-card"><strong>今天做什么</strong><p id="tipWhat">先朗读课文，再写口算，最后拍完成记录。</p></article>
+            <article class="tip-card"><strong>做多久</strong><p>大约 18 分钟</p></article>
+            <article class="tip-card"><strong>怎么算完成</strong><p>每一步都点完成，最后上传作品。</p></article>
+          </div>
+
+          <div class="step-list" id="stepList"></div>
+
+          <article class="finish-box">
+            <div>
+              <p class="eyebrow">完成区</p>
+              <h3>上传录音或视频</h3>
+            </div>
+            <label class="ghost-upload">
+              <input type="file" id="completionMediaInput" accept="audio/*,video/*">
+              <span id="completionMediaLabel">选择文件</span>
+            </label>
+            <button class="ghost-button" id="markAssignmentDone">标记今天全部完成</button>
+          </article>
+        </article>
+      </section>
+
+      <section class="page" id="page-step" data-page="step">
+        <article class="step-stage">
+          <p class="eyebrow">现在只做这一件事</p>
+          <h1 id="stepTitle">第 1 步：大声朗读课文</h1>
+          <p class="step-explain" id="stepDescription">先把课本翻到第 12 页，跟着语音慢慢读 5 分钟。</p>
+          <button class="primary-button voice-only voice-trigger" data-speak="currentStep">听提示</button>
+          <div class="action-zone" id="stepActionZone">
+            <div class="timer-panel">
+              <span class="timer-label">朗读倒计时</span>
+              <strong id="timerDisplay">05:00</strong>
+              <button class="soft-button" id="timerToggle">开始计时</button>
+            </div>
+          </div>
+          <button class="primary-button xl hidden" id="nextStepButton">下一步</button>
+          <p class="encourage" id="encourageText">你已经开始啦，慢慢来就很好。</p>
+        </article>
+      </section>
+
+      <section class="page" id="page-complete" data-page="complete">
+        <article class="card complete-card">
+          <div class="complete-badge">完成成功</div>
+          <h1>你今天做到了</h1>
+          <p class="complete-copy">自己听懂、自己开始、自己完成，真的很棒。</p>
+          <div class="celebration-grid">
+            <article class="cele-card"><p class="eyebrow">今日奖励</p><strong>获得 3 颗星星</strong></article>
+            <article class="cele-card"><p class="eyebrow">连续天数</p><strong id="streakDays">7 天</strong></article>
+          </div>
+          <article class="done-summary">
+            <p class="eyebrow">今天完成了</p>
+            <ul id="doneList"></ul>
+          </article>
+          <div class="stack">
+            <button class="primary-button xl" data-go="home">回首页</button>
+            <button class="soft-button" data-go="growth">查看成长记录</button>
+          </div>
+        </article>
+      </section>
+
+      <section class="page" id="page-growth" data-page="growth">
+        <article class="card page-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">成长记录</p>
+              <h1>作业成长日记</h1>
+            </div>
+            <span class="status-badge">被看见的努力</span>
+          </div>
+          <div class="journal-list" id="journalList"></div>
+        </article>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-go="home">首页</button>
+      <button class="nav-item" data-go="detail">作业</button>
+      <button class="nav-item" data-go="growth">成长</button>
+      <button class="nav-item weak-nav" data-go="upload">家长</button>
+    </nav>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
