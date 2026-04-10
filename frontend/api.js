@@ -1,4 +1,8 @@
-const apiBaseUrl = window.APP_CONFIG?.apiBaseUrl || "http://localhost:3001/api";
+const apiBaseUrl = window.APP_CONFIG?.apiBaseUrl;
+
+if (!apiBaseUrl) {
+  throw new Error("APP_CONFIG.apiBaseUrl is not defined.");
+}
 
 async function request(path, options = {}) {
   const response = await fetch(`${apiBaseUrl}${path}`, {

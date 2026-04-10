@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -6,16 +6,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const frontendDir = path.resolve(__dirname, "..");
 const distDir = path.join(frontendDir, "build");
+const productionApiBaseUrl = "https://seashell-app-kch93.ondigitalocean.app/api";
 
 await mkdir(distDir, { recursive: true });
 
 const filesToCopy = ["index.html", "styles.css", "script.js", "api.js"];
 
 for (const file of filesToCopy) {
-  await cp(path.join(frontendDir, file), path.join(distDir, file));
+  const content = await readFile(path.join(frontendDir, file), "utf8");
+  await writeFile(path.join(distDir, file), content, "utf8");
 }
 
-const apiBaseUrl = process.env.FRONTEND_API_BASE_URL || "http://localhost:3001/api";
+const apiBaseUrl = process.env.FRONTEND_API_BASE_URL || productionApiBaseUrl;
 const configContent = `window.APP_CONFIG = ${JSON.stringify({ apiBaseUrl }, null, 2)};\n`;
 await writeFile(path.join(distDir, "config.js"), configContent, "utf8");
 
