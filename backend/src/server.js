@@ -208,11 +208,12 @@ async function writeHomeworkList(list) {
 }
 
 function parseAllowedOrigins() {
-  const raw = process.env.CORS_ALLOWED_ORIGINS || "http://localhost:8080,http://127.0.0.1:8080";
+  const raw = process.env.CORS_ALLOWED_ORIGINS
+    || "http://localhost:8080,http://127.0.0.1:8080,https://brainywork-mdyc7uqtx-isdingzhans-projects.vercel.app";
   return raw.split(",").map((item) => item.trim()).filter(Boolean);
 }
 
-app.use(cors({
+const corsOptions = {
   origin(origin, callback) {
     const allowedOrigins = parseAllowedOrigins();
 
@@ -221,9 +222,15 @@ app.use(cors({
       return;
     }
 
-    callback(new Error(`Origin ${origin} is not allowed by CORS.`));
-  }
-}));
+    callback(null, false);
+  },
+  methods: ["GET", "POST", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+  optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 app.use(express.json({ limit: "1mb" }));
 
 app.get("/api/health", async (_req, res) => {
