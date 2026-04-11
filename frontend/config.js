@@ -1,17 +1,20 @@
 (() => {
-  const marker = "__API_BASE_URL_MARKER__";
+  const placeholder = "__API_BASE_URL__";
   const injectedApiBaseUrl = "__API_BASE_URL__";
   const localApiBaseUrl = "http://localhost:3001/api";
   const productionApiBaseUrl = "https://seashell-app-kch93.ondigitalocean.app/api";
   const hostname = window.location.hostname;
   const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
   const defaultApiBaseUrl = isLocalhost ? localApiBaseUrl : productionApiBaseUrl;
-  const normalizedInjectedApiBaseUrl = typeof injectedApiBaseUrl === "string"
-    ? injectedApiBaseUrl.trim().replace(/\/+$/, "")
-    : "";
-  const apiBaseUrl = normalizedInjectedApiBaseUrl && normalizedInjectedApiBaseUrl !== marker
-    ? normalizedInjectedApiBaseUrl
-    : defaultApiBaseUrl;
+  const normalizedInjectedApiBaseUrl =
+    typeof injectedApiBaseUrl === "string"
+      ? injectedApiBaseUrl.trim().replace(/\/+$/, "")
+      : "";
+
+  const apiBaseUrl =
+    normalizedInjectedApiBaseUrl && normalizedInjectedApiBaseUrl !== placeholder
+      ? normalizedInjectedApiBaseUrl
+      : defaultApiBaseUrl;
 
   window.APP_CONFIG = {
     apiBaseUrl,
