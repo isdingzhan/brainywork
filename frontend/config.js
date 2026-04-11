@@ -5,11 +5,16 @@
   const productionApiBaseUrl = "https://seashell-app-kch93.ondigitalocean.app/api";
   const hostname = window.location.hostname;
   const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
-  const apiBaseUrl = injectedApiBaseUrl === marker
-    ? (isLocalhost ? localApiBaseUrl : productionApiBaseUrl)
-    : injectedApiBaseUrl;
+  const defaultApiBaseUrl = isLocalhost ? localApiBaseUrl : productionApiBaseUrl;
+  const normalizedInjectedApiBaseUrl = typeof injectedApiBaseUrl === "string"
+    ? injectedApiBaseUrl.trim().replace(/\/+$/, "")
+    : "";
+  const apiBaseUrl = normalizedInjectedApiBaseUrl && normalizedInjectedApiBaseUrl !== marker
+    ? normalizedInjectedApiBaseUrl
+    : defaultApiBaseUrl;
 
   window.APP_CONFIG = {
-    apiBaseUrl
+    apiBaseUrl,
+    API_BASE_URL: apiBaseUrl
   };
 })();
