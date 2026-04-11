@@ -1,5 +1,5 @@
 (() => {
-  const placeholder = "__API_BASE_URL__";
+  const apiBaseUrlPlaceholder = "__API_BASE_URL__";
   const injectedApiBaseUrl = "__API_BASE_URL__";
   const localApiBaseUrl = "http://localhost:3001/api";
   const productionApiBaseUrl = "https://seashell-app-kch93.ondigitalocean.app/api";
@@ -12,7 +12,7 @@
       : "";
 
   const apiBaseUrl =
-    normalizedInjectedApiBaseUrl && normalizedInjectedApiBaseUrl !== placeholder
+    normalizedInjectedApiBaseUrl && normalizedInjectedApiBaseUrl !== apiBaseUrlPlaceholder
       ? normalizedInjectedApiBaseUrl
       : defaultApiBaseUrl;
 

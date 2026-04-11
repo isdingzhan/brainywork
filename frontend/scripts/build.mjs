@@ -8,6 +8,7 @@ const frontendDir = path.resolve(__dirname, "..");
 const distDir = path.join(frontendDir, "build");
 const productionApiBaseUrl = "https://seashell-app-kch93.ondigitalocean.app/api";
 const localApiBaseUrl = "http://localhost:3001/api";
+const apiBaseUrlPlaceholder = "__API_BASE_URL__";
 
 await mkdir(distDir, { recursive: true });
 
@@ -20,12 +21,13 @@ for (const file of filesToCopy) {
 
 const configuredApiBaseUrl = process.env.FRONTEND_API_BASE_URL || productionApiBaseUrl;
 const configTemplate = await readFile(path.join(frontendDir, "config.js"), "utf8");
+const injectedApiBaseUrlLine = `const injectedApiBaseUrl = "${apiBaseUrlPlaceholder}";`;
 const configContent = configTemplate.replace(
-  'const injectedApiBaseUrl = "__API_BASE_URL__";',
+  injectedApiBaseUrlLine,
   `const injectedApiBaseUrl = ${JSON.stringify(configuredApiBaseUrl)};`
 );
 
-if (configContent.includes("__API_BASE_URL__")) {
+if (configContent.includes(injectedApiBaseUrlLine)) {
   throw new Error("config.js placeholder replacement failed.");
 }
 
