@@ -2,10 +2,12 @@ const localApiBaseUrl = "http://localhost:3001/api";
 const productionApiBaseUrl = "https://seashell-app-kch93.ondigitalocean.app/api";
 const hostname = window.location.hostname;
 const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
+
 const configuredApiBaseUrl =
   window.APP_CONFIG?.apiBaseUrl ||
   window.APP_CONFIG?.API_BASE_URL ||
   (isLocalhost ? localApiBaseUrl : productionApiBaseUrl);
+
 const apiBaseUrl = configuredApiBaseUrl?.replace(/\/+$/, "");
 
 if (!apiBaseUrl) {
