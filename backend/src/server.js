@@ -217,20 +217,28 @@ const corsOptions = {
   origin(origin, callback) {
     const allowedOrigins = parseAllowedOrigins();
 
-    if (!origin || allowedOrigins.includes(origin)) {
+    // 允许没有 origin 的请求（如 curl、移动端应用、同源请求）
+    if (!origin) {
       callback(null, true);
       return;
     }
 
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    // 拒绝但不抛出错误，返回 false 让 cors 中间件处理
     callback(null, false);
   },
   methods: ["GET", "POST", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 204,
+  preflightContinue: false
 };
 
+// CORS 中间件会自动处理 OPTIONS 预检请求
 app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions));
 app.use(express.json({ limit: "1mb" }));
 
 app.get("/api/health", async (_req, res) => {
@@ -285,7 +293,14 @@ app.patch("/api/homework/:id", async (req, res) => {
   res.json(updated);
 });
 
+// 404 处理 - 放在错误处理之前
+app.use((_req, res) => {
+  res.status(404).json({ message: "Not found" });
+});
+
+// 错误处理中间件 - 必须放在最后
 app.use((err, _req, res, _next) => {
+  console.error("Server error:", err);
   const message = err instanceof Error ? err.message : "Internal server error";
   res.status(500).json({ message });
 });
