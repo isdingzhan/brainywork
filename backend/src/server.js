@@ -213,32 +213,41 @@ function parseAllowedOrigins() {
   return raw.split(",").map((item) => item.trim()).filter(Boolean);
 }
 
-const corsOptions = {
+app.use("/api", (req, res, next) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = parseAllowedOrigins();
+
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  }
+
+  if (req.method === "OPTIONS") {
+    res.status(204).end();
+    return;
+  }
+
+  next();
+});
+
+app.use(cors({
   origin(origin, callback) {
     const allowedOrigins = parseAllowedOrigins();
 
-    // 允许没有 origin 的请求（如 curl、移动端应用、同源请求）
-    if (!origin) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
       return;
     }
 
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-      return;
-    }
-
-    // 拒绝但不抛出错误，返回 false 让 cors 中间件处理
     callback(null, false);
   },
   methods: ["GET", "POST", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
   optionsSuccessStatus: 204,
   preflightContinue: false
-};
-
-app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions));
+}));
 app.use(express.json({ limit: "1mb" }));
 
 app.get("/api/health", async (_req, res) => {
