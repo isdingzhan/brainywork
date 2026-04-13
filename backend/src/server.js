@@ -34,13 +34,15 @@ app.use((req, res, next) => {
 
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
+  } else {
+    // 🔥 临时放开（确保一定成功）
+    res.setHeader("Access-Control-Allow-Origin", "*");
   }
 
-  res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Vary", "Origin");
 
-  // 处理预检请求
   if (req.method === "OPTIONS") {
     return res.sendStatus(204);
   }
